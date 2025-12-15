@@ -24,6 +24,7 @@ app.secret_key = "secret"
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 # ========== MQTT CONFIG ==========
+MQTT_HOST = "" #Giang
 MQTT_HOST = "e539507d822e4b348dc6f0af2600bd01.s1.eu.hivemq.cloud" #Giang
 # MQTT_HOST = "0270d20e699d416488126e9f9561de38.s1.eu.hivemq.cloud" 
 MQTT_PORT = 8883
@@ -80,7 +81,6 @@ def operator_required(fn):
     return wrapper
 
 @socketio.on('send_command')
-# @operator_required
 def handle_command(data):
     print("CMD from web: ", data)
     mqtt_client.publish("esp8266/client", data)
