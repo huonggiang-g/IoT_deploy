@@ -80,7 +80,7 @@ def operator_required(fn):
     return wrapper
 
 @socketio.on('send_command')
-@operator_required
+# @operator_required
 def handle_command(data):
     print("CMD from web: ", data)
     mqtt_client.publish("esp8266/client", data)
