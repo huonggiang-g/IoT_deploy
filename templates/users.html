@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Tạo tài khoản</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 60%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 6px;
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+        }
+        .left {
+            flex: 3;
+        }
+        .right {
+            flex: 7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left">
+            <h2>Tạo tài khoản</h2>
+        
+            <form method="post">
+                <label>Username:</label><br>
+                <input name="username" required><br><br>
+        
+                <label>Password:</label><br>
+                <input type="password" name="password" required><br><br>
+        
+                <label>Role:</label><br>
+                <select name="role">
+                    <option value="operator">Operator</option>
+                    <option value="viewer">Viewer</option>
+                </select><br><br>
+        
+                <button type="submit">Tạo tài khoản</button>
+            </form>
+        </div>
+
+        <div class="right">
+            <table>
+                <tr>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Update</th>
+                    <th>Delete</th>
+                </tr>
+        
+                {% for username, info in users.items() %}
+                <tr>
+                    <td>{{ username }}</td>
+                    <td>{{ info.role }}</td>
+                    <td>
+                        <form method="post" action="/users/update/{{ username }}">
+                            <select name="role">
+                                <option value="operator" {% if info.role == "operator" %}selected{% endif %}>operator</option>
+                                <option value="viewer" {% if info.role == "viewer" %}selected{% endif %}>viewer</option>
+                            </select>
+                            <button type="submit">Save</button>
+                        </form>
+                    </td>
+                    <td>
+                        <a href="/users/delete/{{ username }}">delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</body>
+</html>

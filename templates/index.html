@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Robot Monitor</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+            font-weight: 600;
+        }
+
+        .info-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 15px;
+        }
+
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-row label {
+            font-weight: 600;
+            color: #495057;
+            min-width: 120px;
+            font-size: 0.95em;
+        }
+
+        input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        #event, #action {
+            background: #e3f2fd;
+            padding: 12px 15px;
+            border-radius: 8px;
+            color: #1976d2;
+            font-weight: 600;
+            font-size: 0.95em;
+            border-left: 4px solid #1976d2;
+        }
+
+        .control-section {
+            margin-top: 30px;
+        }
+
+        .control-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 15px 20px;
+            font-size: 1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:nth-child(1) {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            grid-column: 2;
+        }
+
+        button:nth-child(2) {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            grid-column: 2;
+        }
+
+        button:nth-child(3) {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        button:nth-child(4) {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            grid-column: 3;
+            grid-row: 2;
+        }
+
+        a {
+            text-decoration: none;
+            display: block;
+            margin-top: 20px;
+        }
+
+        a button {
+            width: 100%;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            font-size: 1.05em;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #4caf50;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .info-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+
+            .info-row label {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><span class="status-indicator"></span>Robot Real-Time</h1>
+        <div class="info-row" style="justify-content: center">
+            <label>User: {{ username }} | Role: {{ role }}</label>
+        </div>
+        
+
+        <div class="info-section">
+            <div class="info-row">
+                <label>auto_mode:</label>
+                <input id="auto_mode" placeholder="0">
+            </div>
+            <div id="event">event:</div>
+            <div class="info-row">
+                <label>distance_max:</label>
+                <input id="distance_max" placeholder="15">
+            </div>
+            <div id="action">action:</div>
+            <div class="info-row">
+                <label>escape_angle:</label>
+                <input id="escape_angle">
+            </div>
+            <div class="info-row">
+                <label>speed:</label>
+                <input id="speed" placeholder="150">
+            </div>
+        </div>
+
+        {% if role == "operator" %}
+            <div class="control-section">
+                <div class="control-title">Điều Khiển Robot</div>
+                <div class="button-grid">
+                    <button onclick="sendCmd('Forward')">Tiến</button>
+                    <button onclick="sendCmd('Stop')">Dừng</button>
+                    <button onclick="sendCmd('TurnLeft')">Trái</button>
+                    <button onclick="sendCmd('TurnRight')">Phải</button>
+                </div>
+            </div>
+
+            <a href="users">
+                <button {% if role == "viewer" %}disabled{% endif %} >Users</button>
+            </a>
+        {% endif %}
+
+        <a href="/database">
+            <button>Database</button>
+        </a>
+        
+        <a href="logout">
+            <button>logout</button>
+        </a>
+    </div>
+
+    <script>
+        const socket = io("http://localhost:5000");
+
+        socket.on("robot_update", data => {
+            document.getElementById("auto_mode").value =
+                data.auto_mode;
+            document.getElementById("event").innerHTML =
+                "event: " + data.event;
+            document.getElementById("distance_max").value =
+                data.distance_max;
+            document.getElementById("action").innerHTML =
+                "action: " + data.action;
+            document.getElementById("escape_angle").value =
+                data.escape_angle;
+            document.getElementById("speed").value =
+                data.speed;
+        });
+        
+        function sendCmd(action) {
+            let json = {
+                auto_mode: document.getElementById("auto_mode").value,
+                event: "remote_control",
+                distance_max: document.getElementById("distance_max").value,
+                escape_angle: document.getElementById("escape_angle").value,
+                speed: document.getElementById("speed").value,
+                action: action
+            }
+
+            let jsonString = JSON.stringify(json);
+            socket.emit("send_command", jsonString);
+        }
+    </script>
+</body>
+</html>

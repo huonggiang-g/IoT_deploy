@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Database</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 60%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 6px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Database</h2>
+
+<table>
+    <tr>
+        <!-- <th>ID</th> -->
+        <th>Action</th>
+        <th>Auto Mode</th>
+        <th>Distance Max</th>
+        <th>Escape Angle</th>
+        <th>Event</th>
+        <th>Speed</th>
+    </tr>
+
+    {% for key, item in data.items() %}
+    <tr>
+        <!-- <td>{{ key }}</td> -->
+        <td>{{ item.action }}</td>
+        <td>{{ item.auto_mode }}</td>
+        <td>{{ item.distance_max }}</td>
+        <td>{{ item.escape_angle }}</td>
+        <td>{{ item.event }}</td>
+        <td>{{ item.speed }}</td>
+    </tr>
+    {% endfor %}
+</table>
+</body>
+</html>
