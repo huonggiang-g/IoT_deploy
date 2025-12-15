@@ -2,6 +2,7 @@
 
 import firebase_admin
 from firebase_admin import credentials, db
+import json, os
 
 firebase_json = json.loads(os.environ["FIREBASE_CONFIG"])
 cred = credentials.Certificate(firebase_json)
@@ -15,7 +16,6 @@ firebase_admin.initialize_app(cred, {
 from flask import Flask, render_template, request, session, redirect
 from flask_socketio import SocketIO
 import paho.mqtt.client as mqtt #pip install paho-mqtt
-import json, os
 from functools import wraps
 
 
