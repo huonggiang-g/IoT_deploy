@@ -1,5 +1,6 @@
 #pip install flask paho-mqtt flask_socketio firebase_admin
 
+from collections import Counter
 import firebase_admin
 from firebase_admin import credentials, db
 import json, os
@@ -163,9 +164,20 @@ def logout():
 @login_required
 def database():
     ref = db.reference("robot_data")
-    data = ref.get()
-    return render_template("database.html", data=data)
+    data = ref.get() or {}
 
+    stats = Counter()
+
+    for item in data.values():
+        action = item.get("action")
+        if action:
+            stats[action] += 1
+
+    return render_template(
+        "database.html",
+        data=data,
+        stats=stats
+    )
 
 port = int(os.environ.get("PORT", 5000))
 if __name__ == "__main__":
