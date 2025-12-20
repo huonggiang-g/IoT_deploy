@@ -1,9 +1,9 @@
 #pip install flask paho-mqtt flask_socketio firebase_admin
 
-from collections import Counter
 import firebase_admin
 from firebase_admin import credentials, db
 import json, os
+from collections import Counter
 
 firebase_json = json.loads(os.environ["FIREBASE_CONFIG"])
 cred = credentials.Certificate(firebase_json)
