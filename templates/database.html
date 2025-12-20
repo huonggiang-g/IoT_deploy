@@ -55,6 +55,27 @@
         tr:hover {
             background-color: #eef3ff;
         }
+
+        .stats {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .stat {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            color: white;
+            border-radius: 8px;
+        }
+        
+        .stop { background: #6c757d; }
+        .forward { background: #28a745; }
+        .left { background: #ffc107; color: #333; }
+        .right { background: #17a2b8; }
+
     </style>
 </head>
 
@@ -62,6 +83,13 @@
 
 <div class="page">
     <h2>Database</h2>
+
+    <div class="stats">
+        <div class="stat stop">Stop<br>{{ stats.get('Stop', 0) }}</div>
+        <div class="stat forward">Forward<br>{{ stats.get('Forward', 0) }}</div>
+        <div class="stat left">TurnLeft<br>{{ stats.get('TurnLeft', 0) }}</div>
+        <div class="stat right">TurnRight<br>{{ stats.get('TurnRight', 0) }}</div>
+    </div>
 
     <table>
         <tr>
