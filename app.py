@@ -1,4 +1,6 @@
 #pip install flask paho-mqtt flask_socketio firebase_admin
+import eventlet
+eventlet.monkey_patch()
 
 import firebase_admin
 from firebase_admin import credentials, db
