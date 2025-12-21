@@ -94,7 +94,8 @@ def operator_required(fn):
 @socketio.on('send_command')
 def handle_command(data):
     print("CMD from web: ", data)
-    mqtt_client.publish("esp8266/client", data)
+    mqtt_client.publish("esp8266/client", json.dumps(data))
+    # mqtt_client.publish("esp8266/client", data)
 
 @app.route("/")
 @login_required
