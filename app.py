@@ -60,6 +60,8 @@ mqtt_client.tls_set()
 mqtt_client.on_message = on_message
 mqtt_client.connect(MQTT_HOST, MQTT_PORT)
 mqtt_client.subscribe("esp8266/dht11")
+mqtt_client.publish("esp8266/client", "test_from_render")
+
 mqtt_client.loop_start()
 # ===================================
 
