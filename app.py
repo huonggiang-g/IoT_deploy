@@ -62,7 +62,11 @@ mqtt_client.connect(MQTT_HOST, MQTT_PORT)
 mqtt_client.subscribe("esp8266/dht11")
 mqtt_client.publish("esp8266/client", "test_from_render")
 
-mqtt_client.loop_start()
+# mqtt_client.loop_start()
+def mqtt_loop():
+    mqtt_client.loop_forever()
+
+socketio.start_background_task(mqtt_loop)
 # ===================================
 
 
