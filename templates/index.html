@@ -257,8 +257,15 @@
 
     <script>
         // const socket = io("http://localhost:5000");
+        // const socket = io({
+        //   transports: ["websocket"],
+        //   reconnection: true,
+        //   reconnectionAttempts: Infinity,
+        //   reconnectionDelay: 2000
+        // });
         const socket = io({
-          transports: ["websocket"],
+          transports: ["websocket"],   
+          upgrade: false,  
           reconnection: true,
           reconnectionAttempts: Infinity,
           reconnectionDelay: 2000
