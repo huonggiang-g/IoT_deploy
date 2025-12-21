@@ -3,3 +3,4 @@ firebase-admin
 flask_socketio
 paho-mqtt
 flask
+eventlet
