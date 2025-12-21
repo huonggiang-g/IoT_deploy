@@ -22,7 +22,13 @@ from functools import wraps
 
 app = Flask(__name__)
 app.secret_key = "secret"
-socketio = SocketIO(app, cors_allowed_origins="*")
+# socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(
+    app,
+    cors_allowed_origins="*",
+    async_mode="eventlet"
+)
+
 
 # ========== MQTT CONFIG ==========
 MQTT_HOST = "" #Giang
