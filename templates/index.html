@@ -256,6 +256,8 @@
     </div>
 
     <script>
+        let socketReady = false;
+
         // const socket = io("http://localhost:5000");
         // const socket = io({
         //   transports: ["websocket"],
@@ -269,6 +271,17 @@
           reconnection: true,
           reconnectionAttempts: Infinity,
           reconnectionDelay: 2000
+        });
+
+        
+        socket.on("connect", () => {
+            console.log("Socket connected:", socket.id);
+            socketReady = true;
+        });
+        
+        socket.on("disconnect", () => {
+            console.log("Socket disconnected");
+            socketReady = false;
         });
 
         socket.on("robot_update", data => {
@@ -287,6 +300,10 @@
         });
         
         function sendCmd(action) {
+            if (!socketReady) {
+                alert("Socket chưa kết nối xong, vui lòng chờ 1 giây");
+                return;
+            }
             let json = {
                 auto_mode: document.getElementById("auto_mode").value,
                 event: "remote_control",
