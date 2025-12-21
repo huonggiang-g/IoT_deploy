@@ -296,8 +296,9 @@
                 action: action
             }
 
-            let jsonString = JSON.stringify(json);
-            socket.emit("send_command", jsonString);
+            // let jsonString = JSON.stringify(json);
+            // socket.emit("send_command", jsonString);
+            socket.emit("send_command", json);
         }
     </script>
 </body>
