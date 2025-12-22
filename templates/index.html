@@ -1,10 +1,8 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>Robot Monitor</title>
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-
     <style>
         * {
             margin: 0;
@@ -14,67 +12,72 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #a8edea, #fed6e3);
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
 
         .container {
             background: white;
             border-radius: 20px;
-            padding: 35px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
             width: 100%;
-            max-width: 650px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.25);
         }
 
         h1 {
-            text-align: center;
             color: #667eea;
-            margin-bottom: 25px;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+            font-weight: 600;
         }
 
         .info-section {
             background: #f8f9fa;
-            padding: 20px;
             border-radius: 12px;
+            padding: 25px;
             margin-bottom: 25px;
         }
 
         .info-row {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
+            gap: 15px;
         }
 
-        label {
-            min-width: 130px;
+        .info-row label {
             font-weight: 600;
             color: #495057;
+            min-width: 120px;
         }
 
         input {
             flex: 1;
-            padding: 10px;
-            border-radius: 8px;
+            padding: 10px 15px;
             border: 2px solid #e0e0e0;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .readonly-box {
-            background: #e3f2fd;
-            padding: 10px;
             border-radius: 8px;
-            font-weight: 600;
+        }
+
+        #event, #action {
+            background: #e3f2fd;
+            padding: 12px 15px;
+            border-radius: 8px;
             color: #1976d2;
+            font-weight: 600;
             border-left: 4px solid #1976d2;
+            margin-bottom: 15px;
+        }
+
+        .control-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
         }
 
         .button-grid {
@@ -84,7 +87,7 @@
         }
 
         button {
-            padding: 12px;
+            padding: 15px;
             font-weight: 600;
             border-radius: 10px;
             border: none;
@@ -92,22 +95,35 @@
             color: white;
         }
 
-        .btn-main { background: linear-gradient(135deg, #667eea, #764ba2); }
-        .btn-stop { background: linear-gradient(135deg, #f093fb, #f5576c); }
-        .btn-left { background: linear-gradient(135deg, #4facfe, #00f2fe); }
-        .btn-right{ background: linear-gradient(135deg, #43e97b, #38f9d7); }
-
-        .btn-wifi {
-            width: 100%;
-            margin-top: 10px;
-            background: linear-gradient(135deg, #fa709a, #fee140);
-            color: black;
+        button:nth-child(1) {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            grid-column: 2;
         }
 
-        .footer-btn {
+        button:nth-child(2) {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            grid-column: 2;
+        }
+
+        button:nth-child(3) {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            grid-column: 1;
+        }
+
+        button:nth-child(4) {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            grid-column: 3;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        a button {
             width: 100%;
-            margin-top: 12px;
-            background: #343a40;
+            margin-top: 15px;
+            background: linear-gradient(135deg, #fa709a, #fee140);
+            color: black;
         }
     </style>
 </head>
@@ -116,33 +132,33 @@
 <div class="container">
     <h1>🤖 Robot Real-Time</h1>
 
-    <p style="text-align:center; margin-bottom:15px;">
-        User: <b>{{ username }}</b> | Role: <b>{{ role }}</b>
-    </p>
+    <div class="info-row" style="justify-content:center">
+        <label>User: {{ username }} | Role: {{ role }}</label>
+    </div>
 
     <!-- ROBOT DATA -->
     <div class="info-section">
         <div class="info-row">
-            <label>auto_mode</label>
+            <label>auto_mode:</label>
             <input id="auto_mode" placeholder="0">
         </div>
 
-        <div id="event" class="readonly-box">event:</div>
+        <div id="event">event:</div>
 
         <div class="info-row">
-            <label>distance_max</label>
+            <label>distance_max:</label>
             <input id="distance_max" placeholder="15">
         </div>
 
-        <div id="action" class="readonly-box">action:</div>
+        <div id="action">action:</div>
 
         <div class="info-row">
-            <label>escape_angle</label>
+            <label>escape_angle:</label>
             <input id="escape_angle">
         </div>
 
         <div class="info-row">
-            <label>speed</label>
+            <label>speed:</label>
             <input id="speed" placeholder="150">
         </div>
     </div>
@@ -150,46 +166,48 @@
     {% if role == "operator" %}
     <!-- CONTROL -->
     <div class="info-section">
-        <h3 style="text-align:center; margin-bottom:15px;">Điều khiển robot</h3>
-
+        <div class="control-title">Điều Khiển Robot</div>
         <div class="button-grid">
-            <button class="btn-main" onclick="sendCmd('Forward')">Tiến</button>
-            <button class="btn-stop" onclick="sendCmd('Stop')">Dừng</button>
-            <button class="btn-left" onclick="sendCmd('TurnLeft')">Trái</button>
-            <button class="btn-right" onclick="sendCmd('TurnRight')">Phải</button>
+            <button onclick="sendCmd('Forward')">Tiến</button>
+            <button onclick="sendCmd('Stop')">Dừng</button>
+            <button onclick="sendCmd('TurnLeft')">Trái</button>
+            <button onclick="sendCmd('TurnRight')">Phải</button>
         </div>
     </div>
 
-    <!-- WIFI CONFIG -->
+    <!-- WIFI CONFIG (CHỈ THÊM PHẦN NÀY) -->
     <div class="info-section">
-        <h3 style="text-align:center; margin-bottom:15px;">Cấu hình WiFi ESP</h3>
+        <div class="control-title">Cấu hình WiFi ESP</div>
 
         <div class="info-row">
-            <label>WiFi SSID</label>
+            <label>WiFi SSID:</label>
             <input id="wifi_ssid" placeholder="Tên WiFi">
         </div>
 
         <div class="info-row">
-            <label>Password</label>
+            <label>Password:</label>
             <input id="wifi_pass" type="password" placeholder="Mật khẩu">
         </div>
 
-        <button class="btn-wifi" onclick="sendWifi()">Gửi WiFi xuống ESP</button>
+        <button style="width:100%; background:linear-gradient(135deg,#fa709a,#fee140); color:black"
+                onclick="sendWifi()">
+            Gửi WiFi xuống ESP
+        </button>
     </div>
     {% endif %}
 
-    <a href="/database"><button class="footer-btn">Database</button></a>
-    <a href="/logout"><button class="footer-btn">Logout</button></a>
+    <a href="/database"><button>Database</button></a>
+    <a href="/logout"><button>Log out</button></a>
 </div>
 
 <script>
+    let socketReady = false;
+
     const socket = io({
         transports: ["websocket"],
         upgrade: false,
         reconnection: true
     });
-
-    let socketReady = false;
 
     socket.on("connect", () => socketReady = true);
     socket.on("disconnect", () => socketReady = false);
@@ -224,7 +242,7 @@
             password: wifi_pass.value
         });
 
-        alert("Đã gửi cấu hình WiFi xuống ESP");
+        alert("Đã gửi WiFi xuống ESP");
     }
 </script>
 </body>
