@@ -3,4 +3,4 @@ firebase-admin
 flask_socketio
 paho-mqtt
 flask
-eventlet==0.33.3
+eventlet
