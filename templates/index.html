@@ -175,7 +175,7 @@
         </div>
     </div>
 
-    <!-- WIFI CONFIG (CHỈ THÊM PHẦN NÀY) -->
+    <!-- WIFI CONFIG -->
     <div class="info-section">
         <div class="control-title">Cấu hình WiFi ESP</div>
 
@@ -203,14 +203,25 @@
 <script>
     let socketReady = false;
 
-    const socket = io({
+    /* ===== SỬA QUAN TRỌNG: PHẢI CÓ URL RENDER ===== */
+    const socket = io("https://iot-deploy-1.onrender.com", {
         transports: ["websocket"],
+        secure: true,
         upgrade: false,
-        reconnection: true
+        reconnection: true,
+        reconnectionAttempts: Infinity,
+        reconnectionDelay: 2000
     });
 
-    socket.on("connect", () => socketReady = true);
-    socket.on("disconnect", () => socketReady = false);
+    socket.on("connect", () => {
+        console.log("Socket connected");
+        socketReady = true;
+    });
+
+    socket.on("disconnect", () => {
+        console.log("Socket disconnected");
+        socketReady = false;
+    });
 
     socket.on("robot_update", data => {
         auto_mode.value = data.auto_mode;
