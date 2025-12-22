@@ -51,10 +51,15 @@
             gap: 15px;
         }
 
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+
         .info-row label {
             font-weight: 600;
             color: #495057;
             min-width: 120px;
+            font-size: 0.95em;
         }
 
         input {
@@ -62,6 +67,14 @@
             padding: 10px 15px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         #event, #action {
@@ -70,12 +83,18 @@
             border-radius: 8px;
             color: #1976d2;
             font-weight: 600;
+            font-size: 0.95em;
             border-left: 4px solid #1976d2;
-            margin-bottom: 15px;
+        }
+
+        .control-section {
+            margin-top: 30px;
         }
 
         .control-title {
+            font-size: 1.1em;
             font-weight: 600;
+            color: #495057;
             margin-bottom: 15px;
             text-align: center;
         }
@@ -84,177 +103,220 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
+            margin-bottom: 20px;
         }
 
         button {
-            padding: 15px;
+            padding: 15px 20px;
+            font-size: 1em;
             font-weight: 600;
-            border-radius: 10px;
             border: none;
+            border-radius: 10px;
             cursor: pointer;
+            transition: all 0.3s ease;
             color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        button:active {
+            transform: translateY(0);
         }
 
         button:nth-child(1) {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             grid-column: 2;
         }
 
         button:nth-child(2) {
-            background: linear-gradient(135deg, #f093fb, #f5576c);
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             grid-column: 2;
         }
 
         button:nth-child(3) {
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             grid-column: 1;
+            grid-row: 2;
         }
 
         button:nth-child(4) {
-            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
             grid-column: 3;
+            grid-row: 2;
         }
 
         a {
             text-decoration: none;
+            display: block;
+            margin-top: 20px;
         }
 
         a button {
             width: 100%;
-            margin-top: 15px;
-            background: linear-gradient(135deg, #fa709a, #fee140);
-            color: black;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            font-size: 1.05em;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #4caf50;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .info-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+
+            .info-row label {
+                min-width: auto;
+            }
         }
     </style>
 </head>
-
 <body>
-<div class="container">
-    <h1>🤖 Robot Real-Time</h1>
+    <div class="container">
+        <h1><span class="status-indicator"></span>Robot Real-Time</h1>
+        <div class="info-row" style="justify-content: center">
+            <label>User: {{ username }} | Role: {{ role }}</label>
+        </div>
+        
 
-    <div class="info-row" style="justify-content:center">
-        <label>User: {{ username }} | Role: {{ role }}</label>
+        <div class="info-section">
+            <div class="info-row">
+                <label>auto_mode:</label>
+                <input id="auto_mode" placeholder="0">
+            </div>
+            <div id="event">event:</div>
+            <div class="info-row">
+                <label>distance_max:</label>
+                <input id="distance_max" placeholder="15">
+            </div>
+            <div id="action">action:</div>
+            <div class="info-row">
+                <label>escape_angle:</label>
+                <input id="escape_angle">
+            </div>
+            <div class="info-row">
+                <label>speed:</label>
+                <input id="speed" placeholder="150">
+            </div>
+        </div>
+
+        {% if role == "operator" %}
+            <div class="control-section">
+                <div class="control-title">Điều Khiển Robot</div>
+                <div class="button-grid">
+                    <button type="button" onclick="sendCmd('Forward')">Tiến</button>
+                    <button type="button" onclick="sendCmd('Stop')">Dừng</button>
+                    <button type="button" onclick="sendCmd('TurnLeft')">Trái</button>
+                    <button type="button" onclick="sendCmd('TurnRight')">Phải</button>
+                </div>
+            </div>
+
+            <a href="users">
+                <button {% if role == "viewer" %}disabled{% endif %} >Users</button>
+            </a>
+        {% endif %}
+
+        <a href="/database">
+            <button>Database</button>
+        </a>
+        
+        <a href="logout">
+            <button>Log out</button>
+        </a>
     </div>
 
-    <!-- ROBOT DATA -->
-    <div class="info-section">
-        <div class="info-row">
-            <label>auto_mode:</label>
-            <input id="auto_mode" placeholder="0">
-        </div>
+    <script>
+        let socketReady = false;
 
-        <div id="event">event:</div>
-
-        <div class="info-row">
-            <label>distance_max:</label>
-            <input id="distance_max" placeholder="15">
-        </div>
-
-        <div id="action">action:</div>
-
-        <div class="info-row">
-            <label>escape_angle:</label>
-            <input id="escape_angle">
-        </div>
-
-        <div class="info-row">
-            <label>speed:</label>
-            <input id="speed" placeholder="150">
-        </div>
-    </div>
-
-    {% if role == "operator" %}
-    <!-- CONTROL -->
-    <div class="info-section">
-        <div class="control-title">Điều Khiển Robot</div>
-        <div class="button-grid">
-            <button onclick="sendCmd('Forward')">Tiến</button>
-            <button onclick="sendCmd('Stop')">Dừng</button>
-            <button onclick="sendCmd('TurnLeft')">Trái</button>
-            <button onclick="sendCmd('TurnRight')">Phải</button>
-        </div>
-    </div>
-
-    <!-- WIFI CONFIG -->
-    <div class="info-section">
-        <div class="control-title">Cấu hình WiFi ESP</div>
-
-        <div class="info-row">
-            <label>WiFi SSID:</label>
-            <input id="wifi_ssid" placeholder="Tên WiFi">
-        </div>
-
-        <div class="info-row">
-            <label>Password:</label>
-            <input id="wifi_pass" type="password" placeholder="Mật khẩu">
-        </div>
-
-        <button style="width:100%; background:linear-gradient(135deg,#fa709a,#fee140); color:black"
-                onclick="sendWifi()">
-            Gửi WiFi xuống ESP
-        </button>
-    </div>
-    {% endif %}
-
-    <a href="/database"><button>Database</button></a>
-    <a href="/logout"><button>Log out</button></a>
-</div>
-
-<script>
-    let socketReady = false;
-
-    /* ===== SỬA QUAN TRỌNG: PHẢI CÓ URL RENDER ===== */
-    const socket = io("https://iot-deploy-1.onrender.com", {
-        transports: ["websocket"],
-        secure: true,
-        upgrade: false,
-        reconnection: true,
-        reconnectionAttempts: Infinity,
-        reconnectionDelay: 2000
-    });
-
-    socket.on("connect", () => {
-        console.log("Socket connected");
-        socketReady = true;
-    });
-
-    socket.on("disconnect", () => {
-        console.log("Socket disconnected");
-        socketReady = false;
-    });
-
-    socket.on("robot_update", data => {
-        auto_mode.value = data.auto_mode;
-        event.innerHTML = "event: " + data.event;
-        distance_max.value = data.distance_max;
-        action.innerHTML = "action: " + data.action;
-        escape_angle.value = data.escape_angle;
-        speed.value = data.speed;
-    });
-
-    function sendCmd(action) {
-        if (!socketReady) return alert("Socket chưa sẵn sàng");
-
-        socket.emit("send_command", {
-            auto_mode: auto_mode.value,
-            event: "remote_control",
-            distance_max: distance_max.value,
-            escape_angle: escape_angle.value,
-            speed: speed.value,
-            action: action
-        });
-    }
-
-    function sendWifi() {
-        if (!socketReady) return alert("Socket chưa sẵn sàng");
-
-        socket.emit("set_wifi", {
-            ssid: wifi_ssid.value,
-            password: wifi_pass.value
+        // const socket = io("http://localhost:5000");
+        // const socket = io({
+        //   transports: ["websocket"],
+        //   reconnection: true,
+        //   reconnectionAttempts: Infinity,
+        //   reconnectionDelay: 2000
+        // });
+        const socket = io({
+          transports: ["websocket"],   
+          upgrade: false,  
+          reconnection: true,
+          reconnectionAttempts: Infinity,
+          reconnectionDelay: 2000
         });
 
-        alert("Đã gửi WiFi xuống ESP");
-    }
-</script>
+        
+        socket.on("connect", () => {
+            console.log("Socket connected:", socket.id);
+            socketReady = true;
+        });
+        
+        socket.on("disconnect", () => {
+            console.log("Socket disconnected");
+            socketReady = false;
+        });
+
+        socket.on("robot_update", data => {
+            document.getElementById("auto_mode").value =
+                data.auto_mode;
+            document.getElementById("event").innerHTML =
+                "event: " + data.event;
+            document.getElementById("distance_max").value =
+                data.distance_max;
+            document.getElementById("action").innerHTML =
+                "action: " + data.action;
+            document.getElementById("escape_angle").value =
+                data.escape_angle;
+            document.getElementById("speed").value =
+                data.speed;
+        });
+        
+        function sendCmd(action) {
+            if (!socketReady) {
+                alert("Socket chưa kết nối xong, vui lòng chờ 1 giây");
+                return;
+            }
+            let json = {
+                auto_mode: document.getElementById("auto_mode").value,
+                event: "remote_control",
+                distance_max: document.getElementById("distance_max").value,
+                escape_angle: document.getElementById("escape_angle").value,
+                speed: document.getElementById("speed").value,
+                action: action
+            }
+
+            // let jsonString = JSON.stringify(json);
+            // socket.emit("send_command", jsonString);
+            socket.emit("send_command", json);
+        }
+    </script>
 </body>
 </html>
